@@ -23,9 +23,12 @@ namespace BlazorAuthServerSample
                 .AddMicrosoftIdentityWebApp(
                     builder.Configuration.GetSection("AzureAd"));
 
-            builder.Services
-                .AddAuthorization(
-                    policy => policy.FallbackPolicy = policy.DefaultPolicy);
+            //builder.Services
+            //    .AddAuthorization(
+            //        policy => policy.FallbackPolicy = policy.DefaultPolicy);
+
+            builder.Services.AddAuthorization();
+
 
             builder.Services.AddSingleton<WeatherForecastService>();
             builder.Services.AddRazorPages();

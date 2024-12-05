@@ -1,4 +1,10 @@
 ﻿@page "/"
+ 
+
+@* @using System.Security.Claims *@
+@* @attribute [Authorize (Roles="AdminRole1")] *@
+ 
+
 
 <PageTitle>Index</PageTitle>
 
@@ -7,3 +13,27 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+@code
+{
+    // private string _authMessage;
+
+    // [Inject]
+    // private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+    //     var user = authState.User;
+
+    //     if (user.Identity.IsAuthenticated)
+    //     {
+    //         _authMessage = $"{user.Identity.Name} is authenticated.";
+
+    //         // Add custom claim here
+    //         var claimsIdentity = (ClaimsIdentity)user.Identity;
+    //         claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, "AdminRole"));
+    //         claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, "Role1"));
+    //     }
+    // }
+}

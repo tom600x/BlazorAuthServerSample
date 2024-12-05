@@ -1,4 +1,7 @@
 ﻿@page "/counter"
+@attribute [Authorize(Roles = "AdminRole1111")]
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Counter</PageTitle>
 
@@ -10,6 +13,18 @@
 
 @code {
     private int currentCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user?.Identity == null || !user.Identity.IsAuthenticated)
+        {
+            Navigation.NavigateTo("MicrosoftIdentity/Account/SignIn", true);
+        }
+  
+    }
 
     private void IncrementCount()
     {
