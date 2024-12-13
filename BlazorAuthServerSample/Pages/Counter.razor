@@ -21,9 +21,14 @@
 
         if (user?.Identity == null || !user.Identity.IsAuthenticated)
         {
-            Navigation.NavigateTo("MicrosoftIdentity/Account/SignIn", true);
+            var returnUrl = Navigation.ToBaseRelativePath(Navigation.Uri);
+            Navigation.NavigateTo($"MicrosoftIdentity/Account/SignIn?returnUrl={returnUrl}", true);
         }
-  
+        else
+        {
+            var returnUrl = Navigation.ToBaseRelativePath(Navigation.Uri);
+            Navigation.NavigateTo(returnUrl, true);
+        }
     }
 
     private void IncrementCount()
