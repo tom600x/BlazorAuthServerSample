@@ -1,5 +1,19 @@
 @inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+@code {
 
+    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
+
+    // protected async override Task OnInitializedAsync()
+    // {
+    //     base.OnInitialized();
+    //     var user = (await AuthStat).User;
+    //     if (!user.Identity.IsAuthenticated )
+    //     {
+    //         NavigationManager.NavigateTo($"MicrosoftIdentity/Account/SignIn?returnUrl={NavigationManager.ToBaseRelativePath}");
+    //     }
+    // }
+}
 <PageTitle>BlazorAuthServerSample</PageTitle>
 
 <div class="page">

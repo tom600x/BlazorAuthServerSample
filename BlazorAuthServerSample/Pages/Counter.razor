@@ -1,6 +1,8 @@
 ﻿@page "/counter"
 @attribute [Authorize]
 @inject NavigationManager Navigation
+
+@using Microsoft.Extensions.Options
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Counter</PageTitle>
@@ -21,8 +23,15 @@
 
         if (user?.Identity == null || !user.Identity.IsAuthenticated)
         {
-            var returnUrl = Navigation.ToBaseRelativePath(Navigation.Uri);
-            Navigation.NavigateTo($"MicrosoftIdentity/Account/SignIn?returnUrl={returnUrl}", true);
+          //  var returnUrl = Navigation.ToBaseRelativePath(Navigation.Uri);
+            var returnUrl =  Navigation.Uri;
+           
+            Navigation.NavigateTo($"MicrosoftIdentity/Account/SignIn", new NavigationOptions 
+            {
+                ForceLoad = true,
+                ReplaceHistoryEntry = false ,
+                HistoryEntryState = returnUrl
+            });
         }
         else
         {
