@@ -35,8 +35,8 @@ namespace BlazorAuthServerSample
             builder.Services.AddRazorPages();
 
             builder.Services
-                .AddServerSideBlazor();
-                //.AddMicrosoftIdentityConsentHandler();
+               .AddServerSideBlazor();
+           //     .AddMicrosoftIdentityConsentHandler();
 
             builder.Services
                 .AddControllersWithViews()
