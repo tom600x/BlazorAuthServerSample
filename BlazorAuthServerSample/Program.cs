@@ -23,12 +23,7 @@ namespace BlazorAuthServerSample
                 .AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApp(
                     builder.Configuration.GetSection("AzureAd"));
-
-            //builder.Services
-            //    .AddAuthorization(
-            //        policy => policy.FallbackPolicy = policy.DefaultPolicy);
-            //builder.Services.AddScoped<MyAuthenticationStateProvider>();
-            //builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<MyAuthenticationStateProvider>());
+ 
 
             builder.Services.AddAuthorization(options =>
             {

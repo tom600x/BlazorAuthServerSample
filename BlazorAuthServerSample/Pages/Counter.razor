@@ -23,21 +23,17 @@
 
         if (user?.Identity == null || !user.Identity.IsAuthenticated)
         {
-          //  var returnUrl = Navigation.ToBaseRelativePath(Navigation.Uri);
-            var returnUrl =  Navigation.Uri;
+           var returnUrl = Navigation.ToBaseRelativePath(Navigation.Uri);
            
-            Navigation.NavigateTo($"MicrosoftIdentity/Account/SignIn", new NavigationOptions 
+            Navigation.NavigateTo($"MicrosoftIdentity/Account/SignIn?redirectUri=/" + returnUrl, new NavigationOptions
             {
                 ForceLoad = true,
                 ReplaceHistoryEntry = false ,
                 HistoryEntryState = returnUrl
             });
+
         }
-        // else
-        // {
-        //     var returnUrl = Navigation.ToBaseRelativePath(Navigation.Uri);
-        //     Navigation.NavigateTo(returnUrl, true);
-        // }
+
     }
 
     private void IncrementCount()
