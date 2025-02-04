@@ -1,68 +1,82 @@
 using BlazorAuthServerSample.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
-using System.Security.Claims;
+using System.Net;
 
 namespace BlazorAuthServerSample
 {
     public class Program
     {
- 
-
-        public static void Main(string[] args)
+         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services
-                .AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApp(
-                    builder.Configuration.GetSection("AzureAd"));
- 
+            // Add authentication services with OpenID Connect and Microsoft Identity Web App
+            builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+                .AddMicrosoftIdentityWebApp(options =>
+                {
+                    builder.Configuration.Bind("AzureAd", options);
+                    options.Events.OnRedirectToIdentityProvider = context =>
+                    {
+                        string referer = context.HttpContext.Request.Headers.Referer.FirstOrDefault();
+                        Uri myUri = new Uri(referer);
+                        string authority = myUri.Authority;
+                        string scheme = myUri.Scheme;
 
-            builder.Services.AddAuthorization(options =>
-            {
-                options.AddPolicy("AuthenticatedUser", policy =>
-                    policy.RequireAuthenticatedUser());
-            });
+                        context.ProtocolMessage.RedirectUri = $"{scheme}://{authority}/signin-oidc";
+                        return Task.CompletedTask;
+                    };
+                });
 
+            // Add core authentication services
+            builder.Services.AddAuthenticationCore();
+            // Add WeatherForecastService as a singleton service
             builder.Services.AddSingleton<WeatherForecastService>();
+            // Add Razor Pages services
             builder.Services.AddRazorPages();
-
-            builder.Services
-               .AddServerSideBlazor();
-           //     .AddMicrosoftIdentityConsentHandler();
-
-            builder.Services
-                .AddControllersWithViews()
-                .AddMicrosoftIdentityUI();
-
+            // Add Blazor Server services
+            builder.Services.AddServerSideBlazor();
+            // Add controllers with views and Microsoft Identity UI
+            builder.Services.AddControllersWithViews().AddMicrosoftIdentityUI();
+            // Add custom claims transformation service
             builder.Services.AddTransient<IClaimsTransformation, MyClaimsTransformation>();
 
             var app = builder.Build();
 
+            // Configure forwarded headers options
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
+            });
+
             if (!app.Environment.IsDevelopment())
             {
+                // Use exception handler and HSTS in non-development environments
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
 
+            // Use HTTPS redirection
             app.UseHttpsRedirection();
+            // Serve static files
             app.UseStaticFiles();
+            // Use routing
             app.UseRouting();
-
+            // Use authentication
             app.UseAuthentication();
-            app.UseAuthorization(); 
+            // Use authorization
+            app.UseAuthorization();
 
-   
+            // Map controllers
             app.MapControllers();
+            // Map Blazor Hub
             app.MapBlazorHub();
+            // Map fallback to page
             app.MapFallbackToPage("/_Host");
+            // Run the application
             app.Run();
         }
     }
