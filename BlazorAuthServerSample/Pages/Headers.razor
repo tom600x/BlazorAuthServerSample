@@ -1,0 +1,30 @@
+﻿@page "/headers"
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<h3>Request Headers</h3>
+@if (_headers == null)
+{
+        <p>No headers available.</p>
+}
+else
+{
+        <ul>
+        @foreach (var header in _headers)
+        {
+                    <li><strong>@header.Key:</strong> @header.Value</li>
+        }
+        </ul>
+}
+
+@code {
+    private IHeaderDictionary? _headers;
+
+    protected override void OnInitialized()
+    {
+        if (HttpContextAccessor.HttpContext?.Request != null)
+        {
+            _headers = HttpContextAccessor.HttpContext.Request.Headers;
+        }
+    }
+}

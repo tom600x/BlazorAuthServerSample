@@ -1,3 +1,4 @@
+using Azure.Core;
 using BlazorAuthServerSample.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -20,13 +21,9 @@ namespace BlazorAuthServerSample
                 {
                     builder.Configuration.Bind("AzureAd", options);
                     options.Events.OnRedirectToIdentityProvider = context =>
-                    {
-                        string referer = context.HttpContext.Request.Headers.Referer.FirstOrDefault();
-                        Uri myUri = new Uri(referer);
-                        string authority = myUri.Authority;
-                        string scheme = myUri.Scheme;
-
-                        context.ProtocolMessage.RedirectUri = $"{scheme}://{authority}/signin-oidc";
+                    {  
+                        string host =  context.HttpContext.Request.Host.Value;
+                        context.ProtocolMessage.RedirectUri = $"https://{host}/signin-oidc";
                         return Task.CompletedTask;
                     };
                 });
@@ -43,6 +40,8 @@ namespace BlazorAuthServerSample
             builder.Services.AddControllersWithViews().AddMicrosoftIdentityUI();
             // Add custom claims transformation service
             builder.Services.AddTransient<IClaimsTransformation, MyClaimsTransformation>();
+
+            builder.Services.AddHttpContextAccessor(); // Enable HttpContext access
 
             var app = builder.Build();
 
